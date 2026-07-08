@@ -39,16 +39,18 @@ export default function Cart() {
     await cartQuery.refetch();
   };
 
+  const validateCouponMutation = trpc.coupons.validate.useMutation();
+
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
     setCouponLoading(true);
     try {
-      const result = await trpc.coupons.validate.useQuery({
+      const result = await validateCouponMutation.mutateAsync({
         code: couponCode,
         orderTotal: subtotal.toString(),
-      }).refetch();
-      if (result.data?.valid && result.data.coupon) {
-        setAppliedCoupon(result.data.coupon);
+      });
+      if (result?.valid && result.coupon) {
+        setAppliedCoupon(result.coupon);
       }
     } catch (error) {
       console.error("Coupon validation failed", error);

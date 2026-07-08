@@ -14,6 +14,7 @@ export default function Home() {
 
   const featuredQuery = trpc.templates.getFeatured.useQuery({ limit: 6 });
   const categoriesQuery = trpc.categories.getAll.useQuery();
+  const subscribeMutation = trpc.newsletter.subscribe.useMutation();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -258,7 +259,7 @@ export default function Home() {
                 const email = (e.currentTarget.elements.namedItem("email") as HTMLInputElement)?.value;
                 if (email) {
                   try {
-                    await trpc.newsletter.subscribe.useMutation().mutateAsync({ email });
+                    await subscribeMutation.mutateAsync({ email });
                     (e.currentTarget.elements.namedItem("email") as HTMLInputElement).value = "";
                   } catch (error) {
                     console.error("Newsletter subscription failed", error);
